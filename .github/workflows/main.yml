@@ -82,6 +82,11 @@ jobs:
         path: book/pdf/*.pdf
         retention-days: 30
     - name: Deploy Book
+      # Only deploy to gh-pages on pushes to main. PR builds (especially from
+      # forks) receive a read-only GITHUB_TOKEN and cannot push to gh-pages,
+      # which would otherwise mark every fork PR's CI as failed even though
+      # the build/lint/test steps all succeeded.
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
